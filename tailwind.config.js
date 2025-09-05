@@ -1,5 +1,4 @@
-
-javascript/** @type {import('tailwindcss').Config} */
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -7,12 +6,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {
-      colors: {
-        'branded-teal': '#14b8a6',
-        'branded-blue': '#0891b2',
-      }
-    },
+    extend: {},
   },
   plugins: [],
 }
