@@ -91,12 +91,12 @@ export default function Portal({ supabase }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
-            <span className="text-white font-bold text-lg">BF</span>
+          <div className="bg-gradient-to-r from-info to-primary rounded p-3 mb-3 mx-auto" style={{width: '64px', height: '64px'}}>
+            <span className="text-white fw-bold fs-5">BF</span>
           </div>
-          <p className="text-gray-600">Loading your portal...</p>
+          <p className="text-muted">Loading your portal...</p>
         </div>
       </div>
     )
@@ -104,16 +104,16 @@ export default function Portal({ supabase }) {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md">
-          <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-blue-600 rounded-lg flex items-center justify-center mb-4 mx-auto">
-            <span className="text-white font-bold text-lg">BF</span>
+      <div className="min-vh-100 bg-light d-flex align-items-center justify-content-center">
+        <div className="bg-white p-5 rounded shadow text-center" style={{maxWidth: '400px'}}>
+          <div className="bg-gradient-to-r from-info to-primary rounded p-3 mb-4 mx-auto" style={{width: '64px', height: '64px'}}>
+            <span className="text-white fw-bold fs-5">BF</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Branded + Flow</h1>
-          <p className="text-gray-600 mb-6">Client Portal Access</p>
+          <h1 className="h2 fw-bold text-dark mb-4">Branded + Flow</h1>
+          <p className="text-muted mb-4">Client Portal Access</p>
           <button
             onClick={signIn}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn btn-primary px-4 py-2"
           >
             Sign In with Google
           </button>
@@ -147,59 +147,196 @@ export default function Portal({ supabase }) {
     }
   }
 
-  // Rest of your portal components go here (Navigation, DashboardView, etc.)
-  // Copy from the working version above...
+  const leadData = [
+    { name: 'Mon', leads: 8, qualified: 3 },
+    { name: 'Tue', leads: 12, qualified: 5 },
+    { name: 'Wed', leads: 6, qualified: 2 },
+    { name: 'Thu', leads: 15, qualified: 7 },
+    { name: 'Fri', leads: 11, qualified: 4 },
+    { name: 'Sat', leads: 4, qualified: 1 },
+    { name: 'Sun', leads: 7, qualified: 2 }
+  ]
+
+  const StatCard = ({ title, value, subtitle, icon: Icon, color = "primary" }) => (
+    <div className="card h-100">
+      <div className="card-body">
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <p className="card-text text-muted small">{title}</p>
+            <p className={`h2 fw-bold text-${color}`}>{value}</p>
+            <p className="small text-muted">{subtitle}</p>
+          </div>
+          <Icon size={32} className={`text-${color}`} />
+        </div>
+      </div>
+    </div>
+  )
+
+  const AutomationStatus = ({ automation }) => (
+    <div className="card mb-3">
+      <div className="card-body">
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center">
+            <div 
+              className={`rounded-circle me-3 ${automation.status === 'active' ? 'bg-success' : 'bg-warning'}`}
+              style={{width: '12px', height: '12px'}}
+            ></div>
+            <div>
+              <h6 className="mb-1">{automation.name}</h6>
+              <p className="small text-muted mb-0">
+                {automation.total_runs} runs • {((automation.successful_runs / automation.total_runs) * 100).toFixed(1)}% success
+              </p>
+            </div>
+          </div>
+          <span className={`badge ${automation.status === 'active' ? 'bg-success' : 'bg-warning'}`}>
+            {automation.status}
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+
+  const Navigation = () => (
+    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+      <div className="container-fluid">
+        <div className="d-flex align-items-center">
+          <div className="bg-gradient-to-r from-info to-primary rounded p-2 me-3">
+            <span className="text-white fw-bold small">BF</span>
+          </div>
+          <span className="navbar-brand h4 mb-0">Branded + Flow</span>
+          {clientData && (
+            <span className="text-muted small ms-3">{clientData.company_name}</span>
+          )}
+        </div>
+        
+        <div className="navbar-nav">
+          <div className="nav-item dropdown">
+            <Bell size={20} className="text-muted me-3" />
+            <button onClick={signOut} className="btn btn-link text-muted text-decoration-none">
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  )
+
+  const DashboardView = () => (
+    <div className="container-fluid py-4">
+      {/* Client Banner */}
+      <div className="card bg-gradient-to-r from-info to-primary text-white mb-4">
+        <div className="card-body">
+          <h2 className="h3 fw-bold">{clientData?.company_name || 'Welcome'}</h2>
+          <p className="mb-0 opacity-75">Welcome to your Branded + Flow portal</p>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="row g-4 mb-4">
+        <div className="col-md-3">
+          <StatCard
+            title="Active Automations"
+            value={dashboardData.automations.active}
+            subtitle={`${dashboardData.automations.totalRuns} total runs`}
+            icon={Zap}
+            color="info"
+          />
+        </div>
+        <div className="col-md-3">
+          <StatCard
+            title="Total Leads"
+            value={dashboardData.leads.total}
+            subtitle={`+${dashboardData.leads.thisWeek} this week`}
+            icon={Users}
+            color="primary"
+          />
+        </div>
+        <div className="col-md-3">
+          <StatCard
+            title="CRM Contacts"
+            value={dashboardData.crm.contacts}
+            subtitle="Active contacts"
+            icon={Activity}
+            color="success"
+          />
+        </div>
+        <div className="col-md-3">
+          <StatCard
+            title="Success Rate"
+            value={`${dashboardData.automations.successRate}%`}
+            subtitle="Automation performance"
+            icon={TrendingUp}
+            color="warning"
+          />
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="row g-4 mb-4">
+        <div className="col-lg-8">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">Lead Generation This Week</h5>
+            </div>
+            <div className="card-body">
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={leadData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="leads" fill="#0d6efd" />
+                  <Bar dataKey="qualified" fill="#20c997" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-lg-4">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title mb-0">Automation Performance</h5>
+            </div>
+            <div className="card-body">
+              {automations.slice(0, 3).map((automation, index) => (
+                <AutomationStatus key={index} automation={automation} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="card">
+        <div className="card-header">
+          <h5 className="card-title mb-0">Recent Activity</h5>
+        </div>
+        <div className="card-body">
+          <div className="d-flex align-items-center mb-3">
+            <div className="bg-success rounded-circle me-3" style={{width: '8px', height: '8px'}}></div>
+            <span className="small">Lead generation automation completed - 8 new leads added to CRM</span>
+            <span className="text-muted small ms-auto">2 minutes ago</span>
+          </div>
+          <div className="d-flex align-items-center mb-3">
+            <div className="bg-primary rounded-circle me-3" style={{width: '8px', height: '8px'}}></div>
+            <span className="small">Social media post published to LinkedIn and Facebook</span>
+            <span className="text-muted small ms-auto">1 hour ago</span>
+          </div>
+          <div className="d-flex align-items-center">
+            <div className="bg-info rounded-circle me-3" style={{width: '8px', height: '8px'}}></div>
+            <span className="small">CRM sync completed - 15 contacts updated</span>
+            <span className="text-muted small ms-auto">3 hours ago</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation and content */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-teal-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">BF</span>
-              </div>
-              <span className="text-xl font-bold text-gray-800">Branded + Flow</span>
-              {clientData && (
-                <span className="text-sm text-gray-500">{clientData.company_name}</span>
-              )}
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Bell className="w-5 h-5 text-gray-600" />
-              <button
-                onClick={signOut}
-                className="text-sm text-gray-600 hover:text-gray-900"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">
-            Welcome to your portal, {clientData?.company_name}!
-          </h1>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-teal-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-teal-800">Active Automations</h3>
-              <p className="text-2xl font-bold text-teal-600">{dashboardData.automations.active}</p>
-            </div>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-800">Total Leads</h3>
-              <p className="text-2xl font-bold text-blue-600">{dashboardData.leads.total}</p>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-green-800">CRM Contacts</h3>
-              <p className="text-2xl font-bold text-green-600">{dashboardData.crm.contacts}</p>
-            </div>
-          </div>
-        </div>
-      </main>
+    <div className="min-vh-100 bg-light">
+      <Navigation />
+      <DashboardView />
     </div>
   )
 }
