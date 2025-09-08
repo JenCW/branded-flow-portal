@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from "react";
+
 export default function Portal({ supabase }) {
   const [activeTab, setActiveTab] = useState('dashboard')
   const [user, setUser] = useState(null)
