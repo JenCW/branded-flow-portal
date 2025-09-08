@@ -1,6 +1,8 @@
 ﻿import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Portal from '../components/Portal'
+import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const supabase = createClient(
   'https://mezpmegvgeskhdckjfpa.supabase.co',
