@@ -104,29 +104,32 @@ export default function Portal({ supabase }) {
     )
   }
 
-  if (!user) {
-    const signInWithEmail = async (e) => {
-      e.preventDefault()
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-      if (error) {
-        alert(error.message)
-      }
-    }
+ const signInWithEmail = async (e) => {
+  e.preventDefault()
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  })
+  if (error) {
+    alert(error.message)
+  }
+}
 
-    const signUpWithEmail = async (e) => {
-      e.preventDefault()
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      })
-      if (error) {
-        alert(error.message)
-      } else {
-        alert('Check your email for the confirmation link!')
-      }
+const signUpWithEmail = async (e) => {
+  e.preventDefault()
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+  if (error) {
+    alert(error.message)
+  } else {
+    alert('Check your email for the confirmation link!')
+  }
+}
+
+  if (!user) {
+    
     }
 
     return (
@@ -270,4 +273,5 @@ export default function Portal({ supabase }) {
       </main>
     </div>
   )
+
 }
