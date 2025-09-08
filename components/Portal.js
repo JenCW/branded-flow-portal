@@ -11,6 +11,7 @@ export default function Portal({ supabase }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isSignUp, setIsSignUp] = useState(false)
+  
 
 
   useEffect(() => {
@@ -103,9 +104,7 @@ export default function Portal({ supabase }) {
       </div>
     )
   }
-
-  if (!user) {
-    const signInWithEmail = async (e) => {
+const signInWithEmail = async (e) => {
       e.preventDefault()
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -115,7 +114,6 @@ export default function Portal({ supabase }) {
         alert(error.message)
       }
     }
-
     const signUpWithEmail = async (e) => {
       e.preventDefault()
       const { error } = await supabase.auth.signUp({
@@ -128,6 +126,9 @@ export default function Portal({ supabase }) {
         alert('Check your email for the confirmation link!')
       }
     }
+
+  if (!user) {
+        
 
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
